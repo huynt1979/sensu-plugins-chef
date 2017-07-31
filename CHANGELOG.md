@@ -4,6 +4,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 This CHANGELOG follows the format listed at [Keep A Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+
+## [3.0.3] - 2017-07-27
+## Added
+- Add minimum_uptime option to check-chef-nodes.rb. With this, check-chef-nodes optionally takes into consideration the minimum uptime of a client node when deciding its status. This is to deal with the scenario in which a fresh client has not yet finished first convergence or initialization, therefore, should not be considered 'FAILED' while being queried by check-chef-nodes.
+
 ## [3.0.2] - 2017-05-28
 ## Fixed
 - updating runtime deps

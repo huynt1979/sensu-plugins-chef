@@ -49,6 +49,11 @@ class ChefNodesStatusChecker < Sensu::Plugin::Check::CLI
          long: '--timespan CRITICAL-TIMESPAN',
          default: (1800 + 300.0 + 180)
 
+  option :minimum_uptime,
+         description: 'Amount of uptime in seconds after which node status should be evaluated',
+         short: '-u MINIMUM-UPTIME',
+         long: '--uptime MINIMUM-UPTIME'
+
   option :chef_server_url,
          description: 'URL of Chef server',
          short: '-U CHEF-SERVER-URL',
@@ -84,7 +89,10 @@ class ChefNodesStatusChecker < Sensu::Plugin::Check::CLI
 
   def nodes_last_seen
     nodes = connection.node.all
+    # Don't check nodes that are excluded if specified
     nodes.delete_if { |node| node.name =~ /#{config[:exclude_nodes]}/ }
+    # Don't check nodes that do not meet minimum uptime if specified
+    nodes.delete_if { |node| config[:minimum_uptime] && node.uptime_seconds && node.uptime_seconds <= config[:minimum_uptime] }
     nodes.map do |node|
       node.reload
       if node['automatic']['ohai_time']
